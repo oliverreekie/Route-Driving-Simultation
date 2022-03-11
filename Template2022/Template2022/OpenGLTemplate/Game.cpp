@@ -42,7 +42,6 @@ Source code drawn from a number of sources and examples, including contributions
 #include "MatrixStack.h"
 #include "OpenAssetImportMesh.h"
 #include "Audio.h"
-#include <iostream>
 
 // Constructor
 Game::Game()
@@ -298,12 +297,25 @@ void Game::Render()
 		m_pSphere->Render();
 	modelViewMatrixStack.Pop();
 
-	////Setting diamond shader
-	//CShaderProgram* pDiamondProgram = (*m_pShaderPrograms)[3];
-	//pDiamondProgram->UseProgram();
-	//pDiamondProgram->SetUniform("bUseTexture", true);
-	//pDiamondProgram->SetUniform("sampler0", 0);
-	//pDiamondProgram->SetUniform("CubeMapTex", cubeMapTextureUnit);
+	//Setting diamond shader
+	CShaderProgram* pDiamondProgram = (*m_pShaderPrograms)[2];
+	pDiamondProgram->UseProgram();
+	pDiamondProgram->SetUniform("bUseTexture", true);
+	pDiamondProgram->SetUniform("sampler0", 0);
+	pDiamondProgram->SetUniform("CubeMapTex", cubeMapTextureUnit);
+
+	// Set the projection matrix
+	pDiamondProgram->SetUniform("matrices.projMatrix", m_pCamera->GetPerspectiveProjectionMatrix());
+
+	// Set light and materials in main shader program
+	pDiamondProgram->SetUniform("light1.position", viewMatrix* lightPosition1); // Position of light source *in eye coordinates*
+	pDiamondProgram->SetUniform("light1.La", glm::vec3(1.0f));		// Ambient colour of light
+	pDiamondProgram->SetUniform("light1.Ld", glm::vec3(1.0f));		// Diffuse colour of light
+	pDiamondProgram->SetUniform("light1.Ls", glm::vec3(1.0f));		// Specular colour of light
+	pDiamondProgram->SetUniform("material1.Ma", glm::vec3(1.0f));	// Ambient material reflectance
+	pDiamondProgram->SetUniform("material1.Md", glm::vec3(0.0f));	// Diffuse material reflectance
+	pDiamondProgram->SetUniform("material1.Ms", glm::vec3(0.0f));	// Specular material reflectance
+	pDiamondProgram->SetUniform("material1.shininess", 15.0f);		// Shininess material property
 
 	// Render the Diamond
 	modelViewMatrixStack.Push();
