@@ -163,7 +163,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="diamondShader.frag" />
-    <None Include="diamondShader.vert" />
+    <None Include="resources\shaders\diamondShader.vert" />
     <None Include="resources\shaders\mainShader.frag" />
     <None Include="resources\shaders\mainShader.vert" />
     <None Include="resources\shaders\textShader.frag" />

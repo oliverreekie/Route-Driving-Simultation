@@ -141,7 +141,7 @@
     <None Include="diamondShader.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="diamondShader.vert">
+    <None Include="resources\shaders\diamondShader.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
