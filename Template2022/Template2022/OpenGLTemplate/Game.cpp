@@ -124,6 +124,8 @@ void Game::Initialise()
 	sShaderFileNames.push_back("mainShader.frag");
 	sShaderFileNames.push_back("textShader.vert");
 	sShaderFileNames.push_back("textShader.frag");
+	sShaderFileNames.push_back("diamondShader.frag");
+	sShaderFileNames.push_back("diamondShader.vert");
 
 	for (int i = 0; i < (int) sShaderFileNames.size(); i++) {
 		string sExt = sShaderFileNames[i].substr((int) sShaderFileNames[i].size()-4, 4);
@@ -153,6 +155,15 @@ void Game::Initialise()
 	pFontProgram->AddShaderToProgram(&shShaders[3]);
 	pFontProgram->LinkProgram();
 	m_pShaderPrograms->push_back(pFontProgram);
+
+	//Shader for diamond
+	CShaderProgram* pDiamondProgram = new CShaderProgram;
+	pDiamondProgram->CreateProgram();
+	pDiamondProgram->AddShaderToProgram(&shShaders[4]);
+	pDiamondProgram->AddShaderToProgram(&shShaders[5]);
+	pDiamondProgram->LinkProgram();
+	m_pShaderPrograms->push_back(pDiamondProgram);
+
 
 	// You can follow this pattern to load additional shaders
 
@@ -286,6 +297,13 @@ void Game::Render()
 		//pMainProgram->SetUniform("bUseTexture", false);
 		m_pSphere->Render();
 	modelViewMatrixStack.Pop();
+
+	//Setting diamond shader
+	CShaderProgram* pDiamondProgram = (*m_pShaderPrograms)[4];
+	pDiamondProgram->UseProgram();
+	pDiamondProgram->SetUniform("bUseTexture", true);
+	pDiamondProgram->SetUniform("sampler0", 0);
+	pDiamondProgram->SetUniform("CubeMapTex", cubeMapTextureUnit);
 
 	// Render the Diamond
 	modelViewMatrixStack.Push();

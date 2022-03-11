@@ -138,5 +138,11 @@
     <None Include="resources\shaders\textShader.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="diamondShader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="diamondShader.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
