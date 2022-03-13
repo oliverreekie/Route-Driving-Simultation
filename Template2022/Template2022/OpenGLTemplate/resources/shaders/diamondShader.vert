@@ -8,7 +8,7 @@ uniform struct Matrices
 	mat3 normalMatrix;
 } matrices;
 
-// Structure holding light information:  its position as well as ambient, diffuse, and specular colours
+// Structure holding light information
 struct LightInfo
 {
 	vec4 position;
@@ -17,7 +17,7 @@ struct LightInfo
 	vec3 Ls;
 };
 
-// Structure holding material information:  its ambient, diffuse, and specular colours, and shininess
+// Structure holding material information
 struct MaterialInfo
 {
 	vec3 Ma;
@@ -35,15 +35,11 @@ layout (location = 0) in vec3 inPosition;
 layout (location = 1) in vec2 inCoord;
 layout (location = 2) in vec3 inNormal;
 
-// Vertex colour output to fragment shader -- using Gouraud (interpolated) shading
-out vec3 vColour;	// Colour computed using reflectance model
-out vec2 vTexCoord;	// Texture coordinate
+// Vertex colour output to fragment shader
+out vec3 vColour;
+out vec2 vTexCoord;
 
-out vec3 worldPosition;	// used for skybox
-
-// This function implements the Phong shading model
-// The code is based on the OpenGL 4.0 Shading Language Cookbook, Chapter 2, pp. 62 - 63, with a few tweaks. 
-// Please see Chapter 2 of the book for a detailed discussion.
+// This function implements the Phong shading model.
 vec3 PhongModel(vec4 eyePosition, vec3 eyeNorm)
 {
 	vec3 s = normalize(vec3(light1.position - eyePosition));
@@ -58,7 +54,6 @@ vec3 PhongModel(vec4 eyePosition, vec3 eyeNorm)
 	if (sDotN > 0.0f) 
 		specular = light1.Ls * material1.Ms * pow(max(dot(r, v), 0.0f), material1.shininess + eps);
 	
-
 	return ambient + diffuse + specular;
 
 }
@@ -66,10 +61,6 @@ vec3 PhongModel(vec4 eyePosition, vec3 eyeNorm)
 // This is the entry point into the vertex shader
 void main()
 {	
-
-// Save the world position for rendering the skybox
-	worldPosition = inPosition;
-
 	// Transform the vertex spatial position using 
 	gl_Position = matrices.projMatrix * matrices.modelViewMatrix * vec4(inPosition, 1.0f);
 	

@@ -297,6 +297,9 @@ void Game::Render()
 		m_pSphere->Render();
 	modelViewMatrixStack.Pop();
 
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	//Setting diamond shader
 	CShaderProgram* pDiamondProgram = (*m_pShaderPrograms)[2];
 	pDiamondProgram->UseProgram();
@@ -339,8 +342,10 @@ void Game::Update()
 {
 	// Update the camera using the amount of time that has elapsed to avoid framerate dependent motion
 	 
+	//Uncomment for first person free view
 	//m_pCamera->Update(m_dt);
 	
+	//Uses trigonometry to move the camera in a circle around the diamond - diamond positon at glm::vec3(30.0f, 8.0f, 100.0f)
 	static float t = 0.0f;
 	t += 0.0005f * (float)m_dt;
 	double X = 30 + cos(t) * 14;
