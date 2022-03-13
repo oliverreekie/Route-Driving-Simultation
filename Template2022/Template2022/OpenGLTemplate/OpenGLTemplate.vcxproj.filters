@@ -145,9 +145,4 @@
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Object Include="diamond.obj">
-      <Filter>Source Files</Filter>
-    </Object>
-  </ItemGroup>
 </Project>
