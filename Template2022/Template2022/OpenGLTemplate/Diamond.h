@@ -12,6 +12,7 @@ public:
 	void Create(string sDirectory, string sFilename);
 	void Render();
 	void Release();
+	void CreateTriangle(glm::vec3, glm::vec3, glm::vec3, glm::vec3, glm::vec2, glm::vec2, glm::vec2);
 private:
 	UINT m_vao;
 	CVertexBufferObject m_vbo;

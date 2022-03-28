@@ -125,6 +125,7 @@
   <ItemGroup>
     <ClInclude Include="Audio.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CatmullRom.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Cubemap.h" />
     <ClInclude Include="Diamond.h" />
@@ -133,6 +134,7 @@
     <ClInclude Include="GameWindow.h" />
     <ClInclude Include="HighResolutionTimer.h" />
     <ClInclude Include="MatrixStack.h" />
+    <ClInclude Include="Minecart.h" />
     <ClInclude Include="OpenAssetImportMesh.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Shaders.h" />
@@ -145,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="Audio.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CatmullRom.cpp" />
     <ClCompile Include="Cubemap.cpp" />
     <ClCompile Include="Diamond.cpp" />
     <ClCompile Include="FreeTypeFont.cpp" />
@@ -152,6 +155,7 @@
     <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="HighResolutionTimer.cpp" />
     <ClCompile Include="MatrixStack.cpp" />
+    <ClCompile Include="Minecart.cpp" />
     <ClCompile Include="OpenAssetImportMesh.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Shaders.cpp" />

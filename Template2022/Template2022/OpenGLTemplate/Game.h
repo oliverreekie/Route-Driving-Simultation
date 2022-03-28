@@ -15,8 +15,10 @@ class CFreeTypeFont;
 class CHighResolutionTimer;
 class CSphere;
 class CDiamond;
+class CMinecart;
 class COpenAssetImportMesh;
 class CAudio;
+class CCatmullRom;
 
 class Game {
 private:
@@ -31,17 +33,74 @@ private:
 	vector <CShaderProgram *> *m_pShaderPrograms;
 	CPlane *m_pPlanarTerrain;
 	CFreeTypeFont *m_pFtFont;
-	COpenAssetImportMesh *m_pBarrelMesh;
-	COpenAssetImportMesh *m_pHorseMesh;
-	CSphere *m_pSphere;
+	COpenAssetImportMesh* m_pRockMesh;
+	COpenAssetImportMesh* m_pAxeMesh;
+	COpenAssetImportMesh* m_pHatMesh;
 	CDiamond* m_pDiamond;
+	CMinecart* m_pMinecart;
 	CHighResolutionTimer *m_pHighResolutionTimer;
 	CAudio *m_pAudio;
+	CCatmullRom* m_pCatmullRom;
 
 	// Some other member variables
 	double m_dt;
 	int m_framesPerSecond;
 	bool m_appActive;
+
+	float m_currentDistance = 0.0f;
+
+	glm::vec3 diaPos = glm::vec3(30.0f, 8.0f, 100.0f);
+
+	float rotSave;
+
+	float holdTest;
+
+	//Holds position on track
+	//0 = center, 1 = left, 2 = right
+	int trackPos = 0;
+
+	//Holds the camera view
+	//1 = first person, 2 = 3rd person, 3 = arial
+	int cameraView = 1;
+
+
+	//Rock Positions
+	glm::vec3 rock1 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 rock2 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 rock3 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 rock4 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 rock5 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 rock6 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 rock7 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 rock8 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 rock9 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 rock10 = glm::vec3(0.f, 0.f, 0.f);
+
+	//Diamond Positions
+	glm::vec3 diamond1 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 diamond2 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 diamond3 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 diamond4 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 diamond5 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 diamond6 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 diamond7 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 diamond8 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 diamond9 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 diamond10 = glm::vec3(0.f, 0.f, 0.f);
+
+	//Hat Positions
+	glm::vec3 hat1 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 hat2 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 hat3 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 hat4 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 hat5 = glm::vec3(0.f, 0.f, 0.f);
+
+	//Axe Positions
+	glm::vec3 axe1 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 axe2 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 axe3 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 axe4 = glm::vec3(0.f, 0.f, 0.f);
+	glm::vec3 axe5 = glm::vec3(0.f, 0.f, 0.f);
 
 
 public:
@@ -61,5 +120,9 @@ private:
 	int m_frameCount;
 	double m_elapsedTime;
 
+	void RenderRock(float f, int trackPos, int whichRock);
+	void RenderDiamond(float f, int trackPos, int whichDiamond);
+	void RenderHat(float f, int trackPos, int whichHat);
+	void RenderAxe(float f, int trackPos, int whichAxe);
 
 };
