@@ -44,6 +44,7 @@ Source code drawn from a number of sources and examples, including contributions
 #include "Audio.h"
 #include "CatmullRom.h"
 #include <iostream>
+#include <Array>
 
 // Constructor
 Game::Game()
@@ -206,36 +207,55 @@ void Game::Initialise()
 	m_pCatmullRom->CreateOffsetCurves();
 	m_pCatmullRom->CreateTrack();
 
-	RenderRock(5, 1, 1);
-	RenderRock(40, 0, 2);
-	RenderRock(100, 2, 3);
-	RenderRock(150, 1, 4);
-	RenderRock(190, 2, 5);
-	RenderRock(320, 1, 6);
-	RenderRock(720, 0, 7);
-	RenderRock(840, 2, 8);
-	RenderRock(900, 1, 9);
-	RenderRock(1000, 2, 10);
+	RenderRock(5, 1, 0);
+	rockTrackPos[0] = 1;
+	RenderRock(40, 0, 1);
+	rockTrackPos[1] = 0;
+	RenderRock(100, 2, 2);
+	rockTrackPos[2] = 2;
+	RenderRock(150, 1, 3);
+	rockTrackPos[3] = 1;
+	RenderRock(190, 2, 4);
+	rockTrackPos[4] = 2;
+	RenderRock(320, 1, 5);
+	rockTrackPos[5] = 1;
+	RenderRock(720, 0, 6);
+	rockTrackPos[6] = 0;
+	RenderRock(840, 2, 7);
+	rockTrackPos[7] = 2;
+	RenderRock(900, 1, 8);
+	rockTrackPos[8] = 1;
+	RenderRock(1000, 2, 9);
+	rockTrackPos[9] = 2;
 
-	RenderDiamond(180, 2, 1);
-	RenderDiamond(240, 0, 2);
-	RenderDiamond(810, 1, 3);
-	RenderDiamond(360, 1, 4);
-	RenderDiamond(750, 2, 5);
-	RenderDiamond(940, 0, 6);
-	RenderDiamond(1100, 2, 7);
 
-	RenderHat(200, 1, 1);
-	RenderHat(400, 2, 2);
-	RenderHat(600, 2, 3);
-	RenderHat(800, 1, 4);
-	RenderHat(1050, 1, 5);
+	RenderDiamond(60, 2, 0);
+	diamondTrackPos[0] = 2;
+	RenderDiamond(240, 0, 1);
+	diamondTrackPos[1] = 0;
+	RenderDiamond(810, 1, 2);
+	diamondTrackPos[2] = 1;
+	RenderDiamond(360, 1, 3);
+	diamondTrackPos[3] = 1;
+	RenderDiamond(750, 2, 4);
+	diamondTrackPos[4] = 2;
+	RenderDiamond(940, 0, 5);
+	diamondTrackPos[5] = 0;
+	RenderDiamond(1100, 2, 6);
+	diamondTrackPos[6] = 2;
 
-	RenderAxe(100, 1, 1);
-	RenderAxe(300, 2, 2);
-	RenderAxe(500, 2, 3);
-	RenderAxe(700, 1, 4);
-	RenderAxe(900, 1, 5);
+
+	RenderHat(200, 1, 0);
+	RenderHat(400, 2, 1);
+	RenderHat(600, 2, 2);
+	RenderHat(800, 1, 3);
+	RenderHat(1050, 2, 4);
+
+	RenderAxe(100, 2, 0);
+	RenderAxe(300, 1, 1);
+	RenderAxe(500, 2, 2);
+	RenderAxe(700, 1, 3);
+	RenderAxe(900, 1, 4);
 
 }
 
@@ -277,11 +297,32 @@ void Game::Render()
 	pMainProgram->SetUniform("light1.La", glm::vec3(1.0f));		// Ambient colour of light
 	pMainProgram->SetUniform("light1.Ld", glm::vec3(1.0f));		// Diffuse colour of light
 	pMainProgram->SetUniform("light1.Ls", glm::vec3(1.0f));		// Specular colour of light
+	pMainProgram->SetUniform("light1.direction", glm::normalize(viewNormalMatrix * glm::vec3(0.f, -1.f, 0.f)));
+	pMainProgram->SetUniform("light1.exponent", 20.0f);
+	pMainProgram->SetUniform("light1.cutoff", 30.0f);
+
+	pMainProgram->SetUniform("light2.position", viewMatrix * glm::vec4(0.f, 10.f, 0.f, 1.f));
+	pMainProgram->SetUniform("light2.La", glm::vec3(1.0f, 1.0f, 0.0f));
+	pMainProgram->SetUniform("light2.Ld", glm::vec3(1.0f));
+	pMainProgram->SetUniform("light2.Ls", glm::vec3(1.0f));
+	pMainProgram->SetUniform("light2.direction", glm::normalize(viewNormalMatrix * glm::vec3(0.f, -1.f, 0.f)));
+	pMainProgram->SetUniform("light2.exponent", 20.0f);
+	pMainProgram->SetUniform("light2.cutoff", 30.0f);
+
+	pMainProgram->SetUniform("light3.position", viewMatrix * glm::vec4(0.f, 10.f, 0.f, 1.f));
+	pMainProgram->SetUniform("light3.La", glm::vec3(1.0f, 0.0f, 0.0f));
+	pMainProgram->SetUniform("light3.Ld", glm::vec3(1.0f));
+	pMainProgram->SetUniform("light3.Ls", glm::vec3(1.0f));
+	pMainProgram->SetUniform("light3.direction", glm::normalize(viewNormalMatrix * glm::vec3(0.f, -1.f, 0.f)));
+	pMainProgram->SetUniform("light3.exponent", 20.0f * 0.1f);
+	pMainProgram->SetUniform("light3.cutoff", 30.0f * 0.1f);
+
 	pMainProgram->SetUniform("material1.Ma", glm::vec3(1.0f));	// Ambient material reflectance
 	pMainProgram->SetUniform("material1.Md", glm::vec3(0.0f));	// Diffuse material reflectance
 	pMainProgram->SetUniform("material1.Ms", glm::vec3(0.0f));	// Specular material reflectance
 	pMainProgram->SetUniform("material1.shininess", 15.0f);		// Shininess material property
-		
+
+
 
 	// Render the skybox and terrain with full ambient reflectance 
 	modelViewMatrixStack.Push();
@@ -313,7 +354,7 @@ void Game::Render()
 
 	// Rendering the rocks
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(rock1);
+		modelViewMatrixStack.Translate(rockArray[0]);
 		modelViewMatrixStack.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 180.0f);
 		modelViewMatrixStack.Scale(0.1f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
@@ -322,7 +363,7 @@ void Game::Render()
 	modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(rock2);
+		modelViewMatrixStack.Translate(rockArray[1]);
 		modelViewMatrixStack.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 180.0f);
 		modelViewMatrixStack.Scale(0.1f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
@@ -331,7 +372,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(rock3);
+		modelViewMatrixStack.Translate(rockArray[2]);
 		modelViewMatrixStack.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 180.0f);
 		modelViewMatrixStack.Scale(0.1f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
@@ -340,7 +381,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(rock4);
+		modelViewMatrixStack.Translate(rockArray[3]);
 		modelViewMatrixStack.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 180.0f);
 		modelViewMatrixStack.Scale(0.1f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
@@ -349,7 +390,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(rock5);
+		modelViewMatrixStack.Translate(rockArray[4]);
 		modelViewMatrixStack.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 180.0f);
 		modelViewMatrixStack.Scale(0.1f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
@@ -358,7 +399,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(rock6);
+		modelViewMatrixStack.Translate(rockArray[5]);
 		modelViewMatrixStack.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 180.0f);
 		modelViewMatrixStack.Scale(0.1f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
@@ -367,7 +408,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(rock7);
+		modelViewMatrixStack.Translate(rockArray[6]);
 		modelViewMatrixStack.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 180.0f);
 		modelViewMatrixStack.Scale(0.1f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
@@ -376,7 +417,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(rock8);
+		modelViewMatrixStack.Translate(rockArray[7]);
 		modelViewMatrixStack.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 180.0f);
 		modelViewMatrixStack.Scale(0.1f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
@@ -385,7 +426,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(rock9);
+		modelViewMatrixStack.Translate(rockArray[8]);
 		modelViewMatrixStack.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 180.0f);
 		modelViewMatrixStack.Scale(0.1f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
@@ -394,18 +435,17 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(rock10);
+		modelViewMatrixStack.Translate(rockArray[9]);
 		modelViewMatrixStack.Rotate(glm::vec3(0.0f, 1.0f, 0.0f), 180.0f);
 		modelViewMatrixStack.Scale(0.1f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
 		m_pRockMesh->Render();
 		modelViewMatrixStack.Pop();
-
 
 	// Render the axe 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(axe1);
+		modelViewMatrixStack.Translate(axeArray[0]);
 		modelViewMatrixStack.Scale(4.0f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -413,7 +453,7 @@ void Game::Render()
 	modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(axe2);
+		modelViewMatrixStack.Translate(axeArray[1]);
 		modelViewMatrixStack.Scale(4.0f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -421,7 +461,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(axe3);
+		modelViewMatrixStack.Translate(axeArray[2]);
 		modelViewMatrixStack.Scale(4.0f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -429,7 +469,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(axe4);
+		modelViewMatrixStack.Translate(axeArray[3]);
 		modelViewMatrixStack.Scale(4.0f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -437,7 +477,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(axe5);
+		modelViewMatrixStack.Translate(axeArray[4]);
 		modelViewMatrixStack.Scale(4.0f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -446,7 +486,7 @@ void Game::Render()
 
 	// Render the hat 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(hat1);
+		modelViewMatrixStack.Translate(hatArray[0]);
 		modelViewMatrixStack.Scale(1.0f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -454,7 +494,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(hat2);
+		modelViewMatrixStack.Translate(hatArray[1]);
 		modelViewMatrixStack.Scale(1.0f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -462,7 +502,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 	
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(hat3);
+		modelViewMatrixStack.Translate(hatArray[2]);
 		modelViewMatrixStack.Scale(1.0f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -470,7 +510,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(hat4);
+		modelViewMatrixStack.Translate(hatArray[3]);
 		modelViewMatrixStack.Scale(1.0f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -478,7 +518,7 @@ void Game::Render()
 		modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-		modelViewMatrixStack.Translate(hat5);
+	modelViewMatrixStack.Translate(hatArray[4]);
 		modelViewMatrixStack.Scale(1.0f);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -489,8 +529,8 @@ void Game::Render()
 	//Render the minecart
 	modelViewMatrixStack.Push();
 		modelViewMatrixStack.Translate(diaPos);
+		modelViewMatrixStack.ApplyMatrix(playerRotation);
 		modelViewMatrixStack.Scale(0.45f);
-		//modelViewMatrixStack.Rotate(glm::vec3(0, 1, 0), rotSave);
 		pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 		pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
 		m_pMinecart->Render();
@@ -518,7 +558,7 @@ void Game::Render()
 
 	// Render the Diamond
 	modelViewMatrixStack.Push();
-	modelViewMatrixStack.Translate(diamond1);
+	modelViewMatrixStack.Translate(diamondArray[0]);
 	modelViewMatrixStack.Scale(1.0f);
 	pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 	pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -526,7 +566,7 @@ void Game::Render()
 	modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-	modelViewMatrixStack.Translate(diamond2);
+	modelViewMatrixStack.Translate(diamondArray[1]);
 	modelViewMatrixStack.Scale(1.0f);
 	pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 	pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -534,7 +574,7 @@ void Game::Render()
 	modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-	modelViewMatrixStack.Translate(diamond3);
+	modelViewMatrixStack.Translate(diamondArray[2]);
 	modelViewMatrixStack.Scale(1.0f);
 	pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 	pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -542,7 +582,7 @@ void Game::Render()
 	modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-	modelViewMatrixStack.Translate(diamond4);
+	modelViewMatrixStack.Translate(diamondArray[3]);
 	modelViewMatrixStack.Scale(1.0f);
 	pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 	pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -550,7 +590,7 @@ void Game::Render()
 	modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-	modelViewMatrixStack.Translate(diamond5);
+	modelViewMatrixStack.Translate(diamondArray[4]);
 	modelViewMatrixStack.Scale(1.0f);
 	pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 	pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -558,7 +598,7 @@ void Game::Render()
 	modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-	modelViewMatrixStack.Translate(diamond6);
+	modelViewMatrixStack.Translate(diamondArray[5]);
 	modelViewMatrixStack.Scale(1.0f);
 	pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 	pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -566,7 +606,7 @@ void Game::Render()
 	modelViewMatrixStack.Pop();
 
 	modelViewMatrixStack.Push();
-	modelViewMatrixStack.Translate(diamond7);
+	modelViewMatrixStack.Translate(diamondArray[6]);
 	modelViewMatrixStack.Scale(1.0f);
 	pMainProgram->SetUniform("matrices.modelViewMatrix", modelViewMatrixStack.Top());
 	pMainProgram->SetUniform("matrices.normalMatrix", m_pCamera->ComputeNormalMatrix(modelViewMatrixStack.Top()));
@@ -584,24 +624,14 @@ void Game::Render()
 // Update method runs repeatedly with the Render method
 void Game::Update() 
 {
-	// Update the camera using the amount of time that has elapsed to avoid framerate dependent motion
-	 
-	//Uncomment for first person free view
-	//m_pCamera->Update(m_dt);
-	
 	////Uses trigonometry to move the camera in a circle around the diamond - diamond positon at glm::vec3(30.0f, 8.0f, 100.0f)
-	//static float t = 0.0f;
-	//t += 0.0005f * (float)m_dt;
-	//double X = 30 + cos(t) * 14;
-	//double Y = 100 + sin(t) * 14;
-	//glm::vec3 x = glm::vec3(X, 13.0f, Y);
-	//m_pCamera->Set(x, glm::vec3(30.0f, 8.0f, 100.0f), glm::vec3(0, 1, 0));
+	//rotateAroundPoint();
 
-	//Arial View
-	//m_pCamera->Set(glm::vec3(0, 400, 0), glm::vec3(0, 0, 0), glm::vec3(1, 0, 0));
+	////Free movement for debugging
+	//m_pCamera->Update(m_dt);
 
 	//Sets the distance along the line
-	m_currentDistance += m_dt * 0.05f;
+	m_currentDistance += m_dt * 0.0005f * speed;
 	glm::vec3 p;
 	m_pCatmullRom->Sample(m_currentDistance, p);
 	glm::vec3 pNext;
@@ -624,30 +654,8 @@ void Game::Update()
 	glm::vec3 vectorAlongX = glm::vec3(p + 14.0f * crossOfXAxis);
 	vectorAlongX.y += 5.0f;
 
-
-	//Calculating rotation of cart
-	//float product = glm::dot(glm::vec3(0, 0, 1), tangent);
-
-	//float one = glm::length(glm::vec3(0, 0, 1));
-	//float two = glm::length(tangent);
-
-	//float rotation = glm::acos(product / (one * two));
-
-	//rotSave = glm::degrees(rotation);
-
-	//holdTest = rotSave;
-
-	/*glm::vec3 v1 = tangent - glm::vec3(0, 0, 1);
-	v1 = glm::normalize(v1);
-
-	float theta1 = glm::atan(v1.x, v1.z);*/
-
-	glm::vec3 p2 = diaPos;
-	glm::vec3 c = pNext;
-	glm::vec3 v = c - p2;
-	float theta = atan2(v.x, v.z);
-
-	rotSave = glm::degrees(theta);
+	//Calculates rotation of cart around the track
+	playerRotation = glm::inverse(glm::lookAt(glm::vec3(0, 0, 0), tangent, glm::vec3(0, 1, 0)));
 
 	//Set cart position
 	if (trackPos == 0) {
@@ -673,9 +681,43 @@ void Game::Update()
 		m_pCamera->Set(glm::vec3(0, 400, 0), glm::vec3(0, 0, 0), glm::vec3(1, 0, 0));
 	}
 
+	//Reduce speed every second
+	if (speed > 0) {
+
+		speedCounter += m_dt;
+		if (speedCounter >= 1000) {
+			speedCounter -= 1000;
+			speed -= 0.5;
+		}
+	}
+
+	//Checks collision of player with rocks and diamond
+	CollisionCheck(diaPos);
+
 	m_pAudio->Update();
 }
 
+//Function to check collisions with diamonds and rocks
+void Game::CollisionCheck(glm::vec3 playerPos) {
+	//Check diamonds
+	for (int i = 0; i < 7; i++) {
+		if (diamondTrackPos[i] == trackPos) {
+			if (glm::distance(diamondArray[i], diaPos) <= 3.0f) {
+				score++;
+				diamondArray[i] = glm::vec3(100, 100, 100);
+			}
+		}
+	}
+
+	//Check rocks
+	for (int i = 0; i < 9; i++) {
+		if (rockTrackPos[i] == trackPos) {
+			if (glm::distance(rockArray[i], diaPos) <= 3.0f) {
+				rockArray[i] = glm::vec3(100, 100, 100);
+			}
+		}
+	}
+}
 
 void Game::RenderRock(float theDistance, int trackPosition, int whichRock) {
 	glm::vec3 finalPos;
@@ -701,36 +743,7 @@ void Game::RenderRock(float theDistance, int trackPosition, int whichRock) {
 		finalPos = glm::vec3(rightPosition.x, rightPosition.y + 1.3f, rightPosition.z);
 	}
 
-	if (whichRock == 1) {
-		rock1 = finalPos;
-	}
-	else if (whichRock == 2) {
-		rock2 = finalPos;
-	}
-	else if (whichRock == 3) {
-		rock3 = finalPos;
-	}
-	else if (whichRock == 4) {
-		rock4 = finalPos;
-	}
-	else if (whichRock == 5) {
-		rock5 = finalPos;
-	}
-	else if (whichRock == 6) {
-		rock6 = finalPos;
-	}
-	else if (whichRock == 7) {
-		rock7 = finalPos;
-	}
-	else if (whichRock == 8) {
-		rock8 = finalPos;
-	}
-	else if (whichRock == 9) {
-		rock9 = finalPos;
-	}
-	else if (whichRock == 10) {
-		rock10 = finalPos;
-	}
+	rockArray[whichRock] = finalPos;
 }
 
 void Game::RenderDiamond(float theDistance, int trackPosition, int whichDiamond) {
@@ -757,36 +770,7 @@ void Game::RenderDiamond(float theDistance, int trackPosition, int whichDiamond)
 		finalPos = glm::vec3(rightPosition.x, rightPosition.y + 1.3f, rightPosition.z);
 	}
 
-	if (whichDiamond == 1) {
-		diamond1 = finalPos;
-	}
-	else if (whichDiamond == 2) {
-		diamond2 = finalPos;
-	}
-	else if (whichDiamond == 3) {
-		diamond3 = finalPos;
-	}
-	else if (whichDiamond == 4) {
-		diamond4 = finalPos;
-	}
-	else if (whichDiamond == 5) {
-		diamond5 = finalPos;
-	}
-	else if (whichDiamond == 6) {
-		diamond6 = finalPos;
-	}
-	else if (whichDiamond == 7) {
-		diamond7 = finalPos;
-	}
-	else if (whichDiamond == 8) {
-		diamond8 = finalPos;
-	}
-	else if (whichDiamond == 9) {
-		diamond9 = finalPos;
-	}
-	else if (whichDiamond == 10) {
-		diamond10 = finalPos;
-	}
+	diamondArray[whichDiamond] = finalPos;
 }
 
 void Game::RenderHat(float theDistance, int trackPosition, int whichHat) {
@@ -810,21 +794,7 @@ void Game::RenderHat(float theDistance, int trackPosition, int whichHat) {
 		finalPos = glm::vec3(rightPosition.x, rightPosition.y, rightPosition.z);
 	}
 
-	if (whichHat == 1) {
-		hat1 = finalPos;
-	}
-	else if (whichHat == 2) {
-		hat2 = finalPos;
-	}
-	else if (whichHat == 3) {
-		hat3 = finalPos;
-	}
-	else if (whichHat == 4) {
-		hat4 = finalPos;
-	}
-	else if (whichHat == 5) {
-		hat5 = finalPos;
-	}
+	hatArray[whichHat] = finalPos;
 
 }
 
@@ -848,23 +818,7 @@ void Game::RenderAxe(float theDistance, int trackPosition, int whichAxe) {
 		glm::vec3 rightPosition = glm::vec3(p + 6.2f * -crossOfXAxis);
 		finalPos = glm::vec3(rightPosition.x, rightPosition.y, rightPosition.z);
 	}
-
-	if (whichAxe == 1) {
-		hat1 = finalPos;
-	}
-	else if (whichAxe == 2) {
-		axe2 = finalPos;
-	}
-	else if (whichAxe == 3) {
-		axe3 = finalPos;
-	}
-	else if (whichAxe == 4) {
-		axe4 = finalPos;
-	}
-	else if (whichAxe == 5) {
-		axe5 = finalPos;
-	}
-
+	axeArray[whichAxe] = finalPos;
 }
 
 void Game::DisplayFrameRate()
@@ -873,6 +827,7 @@ void Game::DisplayFrameRate()
 
 	RECT dimensions = m_gameWindow.GetDimensions();
 	int height = dimensions.bottom - dimensions.top;
+	int width = dimensions.right - dimensions.left;
 
 	// Increase the elapsed time and frame counter
 	m_elapsedTime += m_dt;
@@ -890,15 +845,57 @@ void Game::DisplayFrameRate()
     }
 
 	if (m_framesPerSecond > 0) {
+
 		// Use the font shader program and render the text
 		fontProgram->UseProgram();
 		glDisable(GL_DEPTH_TEST);
 		fontProgram->SetUniform("matrices.modelViewMatrix", glm::mat4(1));
 		fontProgram->SetUniform("matrices.projMatrix", m_pCamera->GetOrthographicProjectionMatrix());
 		fontProgram->SetUniform("vColour", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
-		//m_pFtFont->Render(20, height - 20, 20, "FPS: %d", m_framesPerSecond);
-		m_pFtFont->Render(20, height - 20, 20, "FPS: %d", trackPos);
+
+		//Render FPS
+		m_pFtFont->Render(20, height - 20, 20, "FPS: %d", m_framesPerSecond);
+
+		//Rendering Speed
+		m_pFtFont->Render(width - 130, height - 53, 30, "Speed: %d", speed);
+
+		//Gold
+		fontProgram->SetUniform("vColour", glm::vec4(1.0f, 1.0f, 0.00465f, 1.0f));
+		m_pFtFont->Render(16, height - 53, 35, "Gold: 10");
+
+		//Silver
+		fontProgram->SetUniform("vColour", glm::vec4(0.52f, 0.52f, 0.52f, 1.0f));
+		m_pFtFont->Render(16, height - 85, 30, "Silver: 6");
+
+		//Bronze
+		fontProgram->SetUniform("vColour", glm::vec4(0.6902f, 0.5529f, 0.3412f, 1.0f));
+		m_pFtFont->Render(16, height - 110, 28, "Bronze: 4");
+
+		//Rendering Score
+		if (score <= 3) {
+			fontProgram->SetUniform("vColour", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+		}
+		else if (score >= 4 && score <= 5) {
+			fontProgram->SetUniform("vColour", glm::vec4(0.6902f, 0.5529f, 0.3412f, 1.0f));
+		}
+		else if (score >= 6 && score <= 9) {
+			fontProgram->SetUniform("vColour", glm::vec4(0.52f, 0.52f, 0.52f, 1.0f));
+		}
+		else if (score >= 10) {
+			fontProgram->SetUniform("vColour", glm::vec4(1.0f, 1.0f, 0.00465f, 1.0f));
+		}
+		m_pFtFont->Render(width - 130, height - 25, 30, "Score: %d", score);
 	}
+}
+
+void Game::rotateAroundPoint() {
+	//Uses trigonometry to move the camera in a circle around the diamond - diamond positon at glm::vec3(30.0f, 8.0f, 100.0f)
+	static float t = 0.0f;
+	t += 0.0005f * (float)m_dt;
+	double X = 30 + cos(t) * 14;
+	double Y = 100 + sin(t) * 14;
+	glm::vec3 x = glm::vec3(X, 13.0f, Y);
+	m_pCamera->Set(x, glm::vec3(30.0f, 8.0f, 100.0f), glm::vec3(0, 1, 0));
 }
 
 
@@ -1012,6 +1009,9 @@ LRESULT Game::ProcessEvents(HWND window,UINT message, WPARAM w_param, LPARAM l_p
 			break;
 		case '3':
 			cameraView = 3;
+			break;
+		case '5':
+			score++;
 			break;
 		case VK_F1:
 			m_pAudio->PlayEventSound();
