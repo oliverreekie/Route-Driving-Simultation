@@ -45,13 +45,13 @@ bool CCubemap::LoadTexture(string filename, BYTE **bmpBytes, int &iWidth, int &i
 	*bmpBytes = new BYTE [iWidth*iHeight*bpp/8];
 	memcpy(*bmpBytes, bDataPointer, iWidth*iHeight*bpp/8);
 	
-	/*
-	GLenum format;
+	
+	/*GLenum format;*/
 	FreeImage_GetBPP(dib);
 	if(FreeImage_GetBPP(dib) == 32)format = GL_RGBA;
 	if(FreeImage_GetBPP(dib) == 24)format = GL_BGR;
 	if(FreeImage_GetBPP(dib) == 8)format = GL_LUMINANCE;
-	*/
+	
 	
 	FreeImage_Unload(dib);
 	return true; // Success
@@ -85,12 +85,12 @@ void CCubemap::Create(string sPositiveX, string sNegativeX, string sPositiveY, s
 	LoadTexture(sPositiveZ, &pbImagePosZ, iWidth, iHeight);
 	LoadTexture(sNegativeZ, &pbImageNegZ, iWidth, iHeight);
 
-	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB, iWidth, iHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, pbImagePosX);
-	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGB, iWidth, iHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, pbImageNegX);
-	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB, iWidth, iHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, pbImagePosY);
-	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB, iWidth, iHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, pbImageNegY);
-	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGB, iWidth, iHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, pbImagePosZ);
-	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB, iWidth, iHeight, 0, GL_BGR, GL_UNSIGNED_BYTE, pbImageNegZ);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGB, iWidth, iHeight, 0, format, GL_UNSIGNED_BYTE, pbImagePosX);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGB, iWidth, iHeight, 0, format, GL_UNSIGNED_BYTE, pbImageNegX);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGB, iWidth, iHeight, 0, format, GL_UNSIGNED_BYTE, pbImagePosY);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGB, iWidth, iHeight, 0, format, GL_UNSIGNED_BYTE, pbImageNegY);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGB, iWidth, iHeight, 0, format, GL_UNSIGNED_BYTE, pbImagePosZ);
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGB, iWidth, iHeight, 0, format, GL_UNSIGNED_BYTE, pbImageNegZ);
 
 	delete[] pbImagePosX;
 	delete[] pbImageNegX;

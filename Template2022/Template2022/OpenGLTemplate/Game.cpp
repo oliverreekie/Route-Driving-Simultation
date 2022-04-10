@@ -257,6 +257,10 @@ void Game::Initialise()
 	RenderAxe(700, 1, 3);
 	RenderAxe(900, 1, 4);
 
+	pause = false;
+
+	lightColour = 1.0;
+
 }
 
 // Render method runs repeatedly in a loop
@@ -294,7 +298,7 @@ void Game::Render()
 	// Set light and materials in main shader program
 	glm::vec4 lightPosition1 = glm::vec4(-100, 100, -100, 1); // Position of light source *in world coordinates*
 	pMainProgram->SetUniform("light1.position", viewMatrix*lightPosition1); // Position of light source *in eye coordinates*
-	pMainProgram->SetUniform("light1.La", glm::vec3(1.0f));		// Ambient colour of light
+	pMainProgram->SetUniform("light1.La", glm::vec3(lightColour));		// Ambient colour of light
 	pMainProgram->SetUniform("light1.Ld", glm::vec3(1.0f));		// Diffuse colour of light
 	pMainProgram->SetUniform("light1.Ls", glm::vec3(1.0f));		// Specular colour of light
 	pMainProgram->SetUniform("light1.direction", glm::normalize(viewNormalMatrix * glm::vec3(0.f, -1.f, 0.f)));
@@ -627,9 +631,6 @@ void Game::Update()
 	////Uses trigonometry to move the camera in a circle around the diamond - diamond positon at glm::vec3(30.0f, 8.0f, 100.0f)
 	//rotateAroundPoint();
 
-	////Free movement for debugging
-	//m_pCamera->Update(m_dt);
-
 	//Sets the distance along the line
 	m_currentDistance += m_dt * 0.0005f * speed;
 	glm::vec3 p;
@@ -654,20 +655,22 @@ void Game::Update()
 	glm::vec3 vectorAlongX = glm::vec3(p + 14.0f * crossOfXAxis);
 	vectorAlongX.y += 5.0f;
 
-	//Calculates rotation of cart around the track
-	playerRotation = glm::inverse(glm::lookAt(glm::vec3(0, 0, 0), tangent, glm::vec3(0, 1, 0)));
+	if (pause == false) {
+		//Calculates rotation of cart around the track
+		playerRotation = glm::inverse(glm::lookAt(glm::vec3(0, 0, 0), tangent, glm::vec3(0, 1, 0)));
 
-	//Set cart position
-	if (trackPos == 0) {
-		diaPos = glm::vec3(p.x, p.y + 1.3f, p.z);
-	}
-	else if (trackPos == 1) {
-		glm::vec3 leftPosition = glm::vec3(p + 2.2f * crossOfXAxis);
-		diaPos = glm::vec3(leftPosition.x, leftPosition.y + 1.3f, leftPosition.z);
-	}
-	else if (trackPos == 2) {
-		glm::vec3 rightPosition = glm::vec3(p + 2.2f * -crossOfXAxis);
-		diaPos = glm::vec3(rightPosition.x, rightPosition.y + 1.3f, rightPosition.z);
+		//Set cart position
+		if (trackPos == 0) {
+			diaPos = glm::vec3(p.x, p.y + 1.3f, p.z);
+		}
+		else if (trackPos == 1) {
+			glm::vec3 leftPosition = glm::vec3(p + 2.2f * crossOfXAxis);
+			diaPos = glm::vec3(leftPosition.x, leftPosition.y + 1.3f, leftPosition.z);
+		}
+		else if (trackPos == 2) {
+			glm::vec3 rightPosition = glm::vec3(p + 2.2f * -crossOfXAxis);
+			diaPos = glm::vec3(rightPosition.x, rightPosition.y + 1.3f, rightPosition.z);
+		}
 	}
 
 	//Setting the camera view
@@ -680,15 +683,30 @@ void Game::Update()
 	else if (cameraView == 3) {
 		m_pCamera->Set(glm::vec3(0, 400, 0), glm::vec3(0, 0, 0), glm::vec3(1, 0, 0));
 	}
+	else if (cameraView == 4) {
+		m_pCamera->Update(m_dt);
+	}
 
 	//Reduce speed every second
-	if (speed > 0) {
+	if (pause == false) {
+		if (speed > 0) {
 
-		speedCounter += m_dt;
-		if (speedCounter >= 1000) {
-			speedCounter -= 1000;
-			speed -= 0.5;
+			speedCounter += m_dt;
+			if (speedCounter >= 1000) {
+				speedCounter -= 1000;
+				speed -= 0.5;
+			}
 		}
+	}
+
+	//Make sure speed doesn't turn negative
+	if (speed <= 0) {
+		speed = 0;
+	}
+
+	//Reduce light at end of game
+	if (speed == 0) {
+		lightColour = 0.1;
 	}
 
 	//Checks collision of player with rocks and diamond
@@ -704,7 +722,9 @@ void Game::CollisionCheck(glm::vec3 playerPos) {
 		if (diamondTrackPos[i] == trackPos) {
 			if (glm::distance(diamondArray[i], diaPos) <= 3.0f) {
 				score++;
-				diamondArray[i] = glm::vec3(100, 100, 100);
+				int newPos = rand() % 3;
+				diamondArray[i] = MoveObject((rand() % 1500), newPos);
+				diamondTrackPos[i] = newPos;
 			}
 		}
 	}
@@ -713,10 +733,41 @@ void Game::CollisionCheck(glm::vec3 playerPos) {
 	for (int i = 0; i < 9; i++) {
 		if (rockTrackPos[i] == trackPos) {
 			if (glm::distance(rockArray[i], diaPos) <= 3.0f) {
-				rockArray[i] = glm::vec3(100, 100, 100);
+				speed -= 10;
+				int newPos = rand() % 3;
+				rockArray[i] = MoveObject((rand() % 1500), newPos);
+				rockTrackPos[i] = newPos;
 			}
 		}
 	}
+
+}
+
+glm::vec3 Game::MoveObject(float theDistance, int trackPosition) {
+	glm::vec3 finalPos;
+
+	glm::vec3 p;
+	m_pCatmullRom->Sample(theDistance, p);
+	glm::vec3 pNext;
+	m_pCatmullRom->Sample(theDistance + 1.f, pNext);
+
+	glm::vec3 tangent = glm::normalize(pNext - p);
+
+	glm::vec3 crossOfXAxis = glm::cross(glm::vec3(0, 1, 0), tangent);
+
+	if (trackPosition == 0) {
+		finalPos = glm::vec3(p.x, p.y + 1.3f, p.z);;
+	}
+	else if (trackPosition == 1) {
+		glm::vec3 leftPosition = glm::vec3(p + 3.2f * crossOfXAxis);
+		finalPos = glm::vec3(leftPosition.x, leftPosition.y + 1.3f, leftPosition.z);
+	}
+	else if (trackPosition == 2) {
+		glm::vec3 rightPosition = glm::vec3(p + 3.2f * -crossOfXAxis);
+		finalPos = glm::vec3(rightPosition.x, rightPosition.y + 1.3f, rightPosition.z);
+	}
+
+	return finalPos;
 }
 
 void Game::RenderRock(float theDistance, int trackPosition, int whichRock) {
@@ -861,30 +912,36 @@ void Game::DisplayFrameRate()
 
 		//Gold
 		fontProgram->SetUniform("vColour", glm::vec4(1.0f, 1.0f, 0.00465f, 1.0f));
-		m_pFtFont->Render(16, height - 53, 35, "Gold: 10");
+		m_pFtFont->Render(16, height - 53, 35, "Gold: 15");
 
 		//Silver
 		fontProgram->SetUniform("vColour", glm::vec4(0.52f, 0.52f, 0.52f, 1.0f));
-		m_pFtFont->Render(16, height - 85, 30, "Silver: 6");
+		m_pFtFont->Render(16, height - 85, 30, "Silver: 10");
 
 		//Bronze
 		fontProgram->SetUniform("vColour", glm::vec4(0.6902f, 0.5529f, 0.3412f, 1.0f));
-		m_pFtFont->Render(16, height - 110, 28, "Bronze: 4");
+		m_pFtFont->Render(16, height - 110, 28, "Bronze: 5");
 
 		//Rendering Score
 		if (score <= 3) {
 			fontProgram->SetUniform("vColour", glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 		}
-		else if (score >= 4 && score <= 5) {
+		else if (score >= 5 && score <= 9) {
 			fontProgram->SetUniform("vColour", glm::vec4(0.6902f, 0.5529f, 0.3412f, 1.0f));
 		}
-		else if (score >= 6 && score <= 9) {
+		else if (score >= 10 && score <= 14) {
 			fontProgram->SetUniform("vColour", glm::vec4(0.52f, 0.52f, 0.52f, 1.0f));
 		}
-		else if (score >= 10) {
+		else if (score >= 15) {
 			fontProgram->SetUniform("vColour", glm::vec4(1.0f, 1.0f, 0.00465f, 1.0f));
 		}
 		m_pFtFont->Render(width - 130, height - 25, 30, "Score: %d", score);
+
+		//Render Game Over
+		if (speed == 0) {
+			fontProgram->SetUniform("vColour", glm::vec4(1.0f, 0.f, 0.f, 1.0f));
+			m_pFtFont->Render(200, height - 290, 80, "Game Over");
+		}
 	}
 }
 
@@ -1003,12 +1060,19 @@ LRESULT Game::ProcessEvents(HWND window,UINT message, WPARAM w_param, LPARAM l_p
 		case '1':
 			//m_pAudio->PlayEventSound();
 			cameraView = 1;
+			pause = false;
 			break;
 		case '2':
 			cameraView = 2;
+			pause = false;
 			break;
 		case '3':
 			cameraView = 3;
+			pause = false;
+			break;
+		case '4':
+			cameraView = 4;
+			pause = true;
 			break;
 		case '5':
 			score++;

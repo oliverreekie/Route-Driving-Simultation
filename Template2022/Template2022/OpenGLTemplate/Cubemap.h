@@ -19,4 +19,6 @@ private:
 	GLuint m_uiTexture;
 	GLuint m_uiSampler; // Sampler name
 
+	GLenum format;
+
 };

@@ -58,7 +58,7 @@ private:
 	int trackPos = 0;
 
 	//Holds the camera view
-	//1 = first person, 2 = 3rd person, 3 = arial
+	//1 = first person, 2 = 3rd person, 3 = arial, 4 = debug
 	int cameraView = 1;
 
 	//Rock Positions
@@ -76,6 +76,10 @@ private:
 	int diamondTrackPos[7];
 
 	int rockTrackPos[9];
+
+	bool pause = false;
+
+	float lightColour;
 
 
 public:
@@ -102,6 +106,8 @@ private:
 	void RenderDiamond(float f, int trackPos, int whichDiamond);
 	void RenderHat(float f, int trackPos, int whichHat);
 	void RenderAxe(float f, int trackPos, int whichAxe);
+
+	glm::vec3 MoveObject(float f, int trackPos);
 
 	void CollisionCheck(glm::vec3 playerPos);
 
